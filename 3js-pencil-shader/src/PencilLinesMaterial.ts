@@ -7,12 +7,14 @@ export class PencilLinesMaterial extends THREE.ShaderMaterial {
 		super({
 			uniforms: {
 				tDiffuse: { value: null },
+				uNormals: { value: null },
+				uTexture: { value: null },
 				uResolution: {
 					value: new THREE.Vector2(1, 1)
 				}
 			},
-			fragmentShader,
-			vertexShader
+			fragmentShader: fragmentShader,
+			vertexShader: vertexShader
 		})
 	}
 }

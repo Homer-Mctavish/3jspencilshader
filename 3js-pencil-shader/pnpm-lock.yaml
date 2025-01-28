@@ -7,6 +7,10 @@ settings:
 importers:
 
   .:
+    dependencies:
+      ts-shader-loader:
+        specifier: ^2.0.2
+        version: 2.0.2
     devDependencies:
       '@types/three':
         specifier: ^0.172.0
@@ -299,6 +303,10 @@ packages:
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
     os: [darwin]
 
+  loader-utils@3.3.1:
+    resolution: {integrity: sha512-FMJTLMXfCLMLfJxcX9PFqX5qD88Z5MRGaZCVzfuqeZSPsyiBzs+pahDQjbIWz2QIzPZz0NX9Zy4FX3lmK6YHIg==}
+    engines: {node: '>= 12.13.0'}
+
   meshoptimizer@0.18.1:
     resolution: {integrity: sha512-ZhoIoL7TNV4s5B6+rx5mC//fw8/POGyNxS/DZyCJeiZ12ScLfVwRE/GfsxwiTkMYYD5DmK2/JXnEVXqL4rF+Sw==}
 
@@ -325,6 +333,9 @@ packages:
 
   three@0.172.0:
     resolution: {integrity: sha512-6HMgMlzU97MsV7D/tY8Va38b83kz8YJX+BefKjspMNAv0Vx6dxMogHOrnRl/sbMIs3BPUKijPqDqJ/+UwJbIow==}
+
+  ts-shader-loader@2.0.2:
+    resolution: {integrity: sha512-PMdxdDQoS9D3O+UZ4y8Ul4AwXjTdvBiZHOLRnjkUbgNJyA1p0c4U2YXggqIGw7apCyoBP80QJz2Y+YcZMFHoVg==}
 
   typescript@5.6.3:
     resolution: {integrity: sha512-hjcS1mhfuyi4WW8IWtjP7brDrG2cuDZukyrYrSauoXGNgx0S7zceP07adYkJycEr56BOUTNPzbInooiN3fn1qw==}
@@ -557,6 +568,8 @@ snapshots:
   fsevents@2.3.3:
     optional: true
 
+  loader-utils@3.3.1: {}
+
   meshoptimizer@0.18.1: {}
 
   nanoid@3.3.8: {}
@@ -597,6 +610,10 @@ snapshots:
   source-map-js@1.2.1: {}
 
   three@0.172.0: {}
+
+  ts-shader-loader@2.0.2:
+    dependencies:
+      loader-utils: 3.3.1
 
   typescript@5.6.3: {}
 

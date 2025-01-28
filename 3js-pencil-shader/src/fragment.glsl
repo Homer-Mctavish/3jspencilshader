@@ -1,7 +1,41 @@
 uniform sampler2D tDiffuse;
+uniform sampler2D uNormals;
+uniform sampler2D uTexture;
+
 uniform vec2 uResolution;
 
+
 varying vec2 vUv;
+
+
+vec2 grad( ivec2 z )  
+{
+    
+    int n = z.x+z.y*11111;
+
+    // Hugo Elias hash (feel free to replace by another one)
+    n = (n<<13)^n;
+    n = (n*(n*n*15731+789221)+1376312589)>>16;
+
+    // Perlin style vectors
+    n &= 7;
+    vec2 gr = vec2(n&1,n>>1)*2.0-1.0;
+    return ( n>=6 ) ? vec2(0.0,gr.x) : 
+           ( n>=4 ) ? vec2(gr.x,0.0) :
+                              gr;                            
+}
+
+float noise( in vec2 p ) {
+    ivec2 i = ivec2(floor( p ));
+     vec2 f =       fract( p );
+	
+	vec2 u = f*f*(3.0-2.0*f); // feel free to replace by a quintic smoothstep instead
+
+    return mix( mix( dot( grad( i+ivec2(0,0) ), f-vec2(0.0,0.0) ), 
+                     dot( grad( i+ivec2(1,0) ), f-vec2(1.0,0.0) ), u.x),
+                mix( dot( grad( i+ivec2(0,1) ), f-vec2(0.0,1.0) ), 
+                     dot( grad( i+ivec2(1,1) ), f-vec2(1.0,1.0) ), u.x), u.y);
+}
 
 float valueAtPoint(sampler2D image, vec2 coord, vec2 texel, vec2 point) {
     vec3 luma = vec3(0.299, 0.587, 0.114);
@@ -10,13 +44,28 @@ float valueAtPoint(sampler2D image, vec2 coord, vec2 texel, vec2 point) {
 }
 
 float diffuseValue(int x, int y) {
-    return valueAtPoint(tDiffuse, vUv, vec2(1.0 / uResolution.x, 1.0 / uResolution.y), vec2(x, y)) * 0.6;
+    float cutoff = 40.0;
+    float offset =  0.5 / cutoff;
+    float noiseValue = clamp(texture(uTexture, vUv).r, 0.0, cutoff) / cutoff - offset;
+
+    return valueAtPoint(tDiffuse, vUv + noiseValue, vec2(1.0 / uResolution.x, 1.0 / uResolution.y), vec2(x, y)) * 0.6;
+}
+
+float normalValue(int x, int y) {
+    float cutoff = 50.0;
+    float offset = 0.5 / cutoff;
+    float noiseValue = clamp(texture(uTexture, vUv).r, 0.0, cutoff) / cutoff - offset;
+
+    return valueAtPoint(uNormals, vUv + noiseValue, vec2(1.0 / uResolution.x, 1.0 / uResolution.y), vec2(x, y)) * 0.3;
 }
 
 float getValue(int x, int y) {
-    return diffuseValue(x, y);
-}
+    float noiseValue = noise(gl_FragCoord.xy);
+    noiseValue = noiseValue * 2.0 - 1.0;
+    noiseValue *= 10.0;
 
+    return diffuseValue(x, y) + normalValue(x, y) * noiseValue;
+}
 
 float combinedSobelValue() {
     // kernel definition (in glsl matrices are filled in column-major order)

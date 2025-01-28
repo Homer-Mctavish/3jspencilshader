@@ -12,11 +12,13 @@ const camera: THREE.Camera = new THREE.PerspectiveCamera(
 	1000
 )
 
-// Create a cube
-const geometry = new THREE.BoxGeometry();
-const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-const cube = new THREE.Mesh(geometry, material);
-scene.add(cube);
+const geometry = new THREE.TorusKnotGeometry(1, 0.3, 200, 32)
+const material = new THREE.MeshStandardMaterial({ color: 0x00ff00 })
+const torus = new THREE.Mesh(geometry, material)
+torus.castShadow = true
+torus.rotation.y = Math.PI / 4
+torus.position.set(0, 1, 0)
+scene.add(torus)
 
 const plane = new THREE.Mesh(
 	new THREE.PlaneGeometry(10, 10),
@@ -55,7 +57,9 @@ const composer = new EffectComposer(renderer)
 const renderPass = new RenderPass(scene, camera)
 const pencilLinePass = new PencilLinesPass({
 	width: renderer.domElement.clientWidth,
-	height: renderer.domElement.clientHeight, scene, camera
+	height: renderer.domElement.clientHeight,
+	scene,
+	camera
 })
 
 composer.addPass(renderPass)
@@ -63,14 +67,9 @@ composer.addPass(pencilLinePass)
 
 const controls = new OrbitControls(camera, renderer.domElement)
 
-
-// Animation loop
 function animate() {
-  requestAnimationFrame(animate);
-  // Rotate the cube
-  cube.rotation.x += 0.01;
-  cube.rotation.y += 0.01;
-  controls.update()
+	requestAnimationFrame(animate)
+	controls.update()
 	composer.render()
 }
 
